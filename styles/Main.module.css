@@ -1,0 +1,18 @@
+.main input[type=text] {
+  width: 700px;
+  height: 65px;
+  border-radius: 25px;
+  border: 1px solid transparent;
+  background-color: #fefefe;
+  font-size: 30px;
+  background-image: url("/search.svg");
+  background-repeat: no-repeat;
+  background-position: 40px 12px;
+  padding-left: 105px;
+  text-transform: capitalize;
+}
+.main input[type=text]:focus {
+  border: 1px solid transparent;
+  color: black;
+  outline: none;
+}/*# sourceMappingURL=Main.module.css.map */

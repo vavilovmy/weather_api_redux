@@ -1,95 +1,66 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+
+import React from "react";
+import { useState } from "react";
+import axios, { Axios } from "axios";
+import styles from "../styles/Main.module.css"
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  type fetchData = {
+    name: string;
+    main: {temp: number; feels_like:number, humidity: number};
+    weather: [{main: string}];
+    wind: {speed: number}
+  }
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const [data, setData] = useState<fetchData | null>(null)
+  const [location, setLocation] = useState('')
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=84fc796dc7a8c4a7ebeddc083a2b03db`
+
+  const searchLocation = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      axios.get<fetchData>(url).then((response) => {
+        setData(response.data)
+        console.log(response.data)
+        setLocation('')
+      })
+    }
+  }
+
+  return (
+    <main className={styles.main}>
+      <h1>Weather App</h1>
+      <input 
+        type="text" 
+        placeholder="Искать город..." 
+        value={location}
+        onKeyDown={searchLocation}
+        onChange={event => setLocation(event.target.value)}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </input>
+      
+      <div className="location">
+        <p>{data?.name}</p>
+      </div>
+      <div className="temp">
+        {data?.main ? <p>{Math.round(data?.main.temp - 273.15)}°C</p> : null}
+      </div>
+      <div className="description">
+        {data?.weather ? <p>{data?.weather[0].main}</p> : null}
+      </div>
+      <div className="feelslike">
+        {data?.main ? <p>{Math.round(data?.main.feels_like - 273.15)}</p> : null}
+        <p>Ощущается как</p>
+      </div>
+      <div className="humidity">
+        {data?.main ? <p>{data?.main.humidity}%</p> : null}
+        <p>Влажность</p>
+      </div>
+      <div className="wind">
+        {data?.wind ? <p>{data.wind.speed}</p> : null}
+        <p>Скорость ветра</p>
+      </div>
+    </main>
   );
 }
