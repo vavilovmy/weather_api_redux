@@ -13,10 +13,17 @@ export default function Home() {
     wind: {speed: number}
   }
 
+  const errorData: fetchData = {
+    name: 'Ошибка. Введите корректное название города.',
+    main: {temp: 273.15, feels_like: 273.15, humidity: 0},
+    weather: [{main: '0'}],
+    wind: {speed: 0}
+  }
+
   const [data, setData] = useState<fetchData | null>(null)
   const [location, setLocation] = useState('')
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=84fc796dc7a8c4a7ebeddc083a2b03db`
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=84fc796dc7a8c4a7ebeddc083a2b03db&lang=ru`
 
   const searchLocation = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -24,8 +31,18 @@ export default function Home() {
         setData(response.data)
         console.log(response.data)
         setLocation('')
+      }).catch((err) => {
+        setData(errorData)
+        setLocation('')
+        console.log(err, err.response)
       })
     }
+  }
+  
+  const weatherIcons: { [key: string]: string} = {
+    Clear: "/clear.svg",
+    Clouds: "/clouds.svg",
+    Rain: '/rain.svg'
   }
 
   return (
@@ -39,27 +56,33 @@ export default function Home() {
         onChange={event => setLocation(event.target.value)}
         >
       </input>
+      <div className={styles.main__weather}>
+      <div className={styles.main__weather__location}>
+        <p>{data?.name}</p><img src="/location.svg"/>
+      </div>
+      <div className={styles.main__weather__temp}>
+        {data?.main ? <h2>{Math.round(data?.main.temp - 273.15)}°C</h2> : null}
+        
+        {data?.weather ? <img 
+          src={weatherIcons[data.weather[0].main] || "/default.svg"} 
+          alt={data.weather[0].main} 
+          width="96" 
+          height="96"
+          /> : null}
       
-      <div className="location">
-        <p>{data?.name}</p>
       </div>
-      <div className="temp">
-        {data?.main ? <p>{Math.round(data?.main.temp - 273.15)}°C</p> : null}
-      </div>
-      <div className="description">
-        {data?.weather ? <p>{data?.weather[0].main}</p> : null}
-      </div>
+      <div className={styles.main__weather__info}>
+      
       <div className="feelslike">
-        {data?.main ? <p>{Math.round(data?.main.feels_like - 273.15)}</p> : null}
-        <p>Ощущается как</p>
+        {data?.main ? <p>Ощущается как: <br></br>{Math.round(data?.main.feels_like - 273.15)}°C</p> : null}
       </div>
       <div className="humidity">
-        {data?.main ? <p>{data?.main.humidity}%</p> : null}
-        <p>Влажность</p>
+        {data?.main ? <p>Влажность: <br></br>{data?.main.humidity}%</p> : null}
       </div>
       <div className="wind">
-        {data?.wind ? <p>{data.wind.speed}</p> : null}
-        <p>Скорость ветра</p>
+        {data?.wind ? <p>Скорость ветра: <br></br>{data.wind.speed} м/с</p> : null}
+      </div>
+      </div>
       </div>
     </main>
   );
