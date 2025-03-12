@@ -3,6 +3,13 @@ body {
   font-family: inter;
   color: white;
   font-size: 26px;
+  a {
+    color: aquamarine;
+    text-decoration: none;
+    &:hover {
+       color: orange;
+    }
+ }
 }
 
 .container {

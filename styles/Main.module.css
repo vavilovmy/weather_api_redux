@@ -68,6 +68,6 @@
   .main .main__weather .main__weather__info {
     width: 75vw;
     flex-direction: column;
-    gap: 15px;
+    gap: 0px;
   }
 }/*# sourceMappingURL=Main.module.css.map */

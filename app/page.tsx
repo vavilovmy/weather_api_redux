@@ -48,6 +48,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1>Weather App</h1>
+      <p>Made by vavilovmy <a href="https://github.com/vavilovmy" target="_blank">github  </a><a href="https://t.me/vavilovmy" target="_blank"> telegram</a></p>
       <input 
         type="text" 
         placeholder="Искать город..." 
